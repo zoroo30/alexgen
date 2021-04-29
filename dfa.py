@@ -1,13 +1,14 @@
 from nfa import NFA
+from fa import FA
 from utilities.partition_refinement import PartitionRefinement
 from utilities.sets import getElement
 
 
-class DFA:
+class DFA(FA):
     def __init__(self, nfa):
         self.alphabet = nfa.alphabet
         self.initial_state = nfa.initial_state
-        self.final_state = {}
+        self.final_states = {}
         self.transition_table = self._getTransitionTable(nfa)
         self.state_id = 0
         self._minimize()
@@ -62,7 +63,7 @@ class DFA:
         # if final add to final states
         is_final, final_for = nfa.isFinal(current_state)
         if is_final:
-            self.final_state[current_state] = final_for
+            self.final_states[current_state] = final_for
 
         # add new states apeared in this record to the transition table
         for ch in transition_table[current_state]:
@@ -88,14 +89,14 @@ class DFA:
                 ]
 
         final_states = {}
-        for state in self.final_state:
+        for state in self.final_states:
             mapped_state = states_dict[state]
-            final_states[mapped_state] = self.final_state[state]
+            final_states[mapped_state] = self.final_states[state]
 
         initial_state = states_dict[frozenset(self.initial_state)]
 
         self.transition_table = transition_table
-        self.final_state = final_states
+        self.final_states = final_states
         self.initial_state = initial_state
 
     def _getTransitionTable(self, nfa):
@@ -158,8 +159,8 @@ class DFA:
                 )
 
         final_states = {}
-        for state in self.final_state:
-            final_states[pr[state]] = self.final_state[state]
+        for state in self.final_states:
+            final_states[pr[state]] = self.final_states[state]
 
         initial_state = pr[self.initial_state]
         return transition_table, final_states, initial_state
@@ -173,8 +174,8 @@ class DFA:
 
         # split final states based on thier label
         final_states_splitted = {}
-        for state in self.final_state:
-            final_states_splitted.setdefault(self.final_state[state], set()).add(state)
+        for state in self.final_states:
+            final_states_splitted.setdefault(self.final_states[state], set()).add(state)
 
         for states_set in final_states_splitted:
             pr.refine(final_states_splitted[states_set])
@@ -194,7 +195,7 @@ class DFA:
 
         (
             self.transition_table,
-            self.final_state,
+            self.final_states,
             self.initial_state,
         ) = self._createTransitionTable(pr)
 
@@ -206,10 +207,10 @@ class DFA:
 
     def __str__(self):
         return (
-            "<DFA initial_state:%s final_state:%s, alphabet:%s, transition_table:%s>"
+            "<DFA initial_state:%s final_states:%s, alphabet:%s, transition_table:%s>"
             % (
                 self.initial_state,
-                self.final_state,
+                self.final_states,
                 self.alphabet,
                 self.transition_table,
             )

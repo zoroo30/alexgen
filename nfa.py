@@ -1,4 +1,7 @@
-class NFA:
+from fa import FA
+
+
+class NFA(FA):
     def __init__(self, initial_state, final_states, alphabet, transition_table):
         self.alphabet = alphabet
         self.initial_state = initial_state
