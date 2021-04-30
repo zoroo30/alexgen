@@ -42,7 +42,7 @@ def stuff(regex,regdef):
 
 		put_dot = []
 
-		print(key)
+		#print(key)
 
 		for i in range(len(regex[key])-1):
 			# maybe add if ) thne auto add .
@@ -70,7 +70,7 @@ def stuff(regex,regdef):
 			counter+=1
 
 		regex[key] = regex[key].strip()
-		print(regex[key])
+		#print(regex[key])
 		#print("")
 		#print(temp)
 
