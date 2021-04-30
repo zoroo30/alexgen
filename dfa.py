@@ -5,14 +5,28 @@ from utilities.sets import getElement
 
 
 class DFA(FA):
-    def __init__(self, nfa):
+    def __init__(self, nfa, minimize=True, relax=True):
         self.alphabet = nfa.alphabet
         self.initial_state = nfa.initial_state
         self.final_states = {}
         self.transition_table = self._getTransitionTable(nfa)
         self.state_id = 0
-        self._minimize()
-        self._relaxeStateNames()
+        self.current_state = self.initial_state
+        if minimize:
+            self._minimize()
+        if relax:
+            self._relaxeStateNames()
+
+    def __str__(self):
+        return (
+            "<DFA initial_state:%s final_states:%s, alphabet:%s, transition_table:%s>"
+            % (
+                self.initial_state,
+                self.final_states,
+                self.alphabet,
+                self.transition_table,
+            )
+        )
 
     def _getEClousre(self, transition_table, states_set):
         """return the e_clousre of states_set using the transition_table"""
@@ -204,27 +218,3 @@ class DFA(FA):
         # self._relaxeStateNames()
 
         return transition_table
-
-    def __str__(self):
-        return (
-            "<DFA initial_state:%s final_states:%s, alphabet:%s, transition_table:%s>"
-            % (
-                self.initial_state,
-                self.final_states,
-                self.alphabet,
-                self.transition_table,
-            )
-        )
-
-
-{
-    frozenset({8}): {"a": frozenset({1}), "b": frozenset({5})},
-    frozenset({2}): {"a": frozenset({2}), "b": frozenset({3})},
-    frozenset({6}): {"a": frozenset({7}), "b": frozenset({8})},
-    frozenset({5}): {"a": frozenset({2}), "b": frozenset({6})},
-    frozenset({0}): {"a": frozenset({1}), "b": frozenset({5})},
-    frozenset({3}): {"a": frozenset({2}), "b": frozenset({4})},
-    frozenset({7}): {"a": frozenset({7}), "b": frozenset({7})},
-    frozenset({4}): {"a": frozenset({1}), "b": frozenset({1})},
-    frozenset({1}): {"a": frozenset({2}), "b": frozenset({3})},
-}
