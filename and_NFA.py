@@ -1,27 +1,4 @@
-class NFA:
-    def __init__(self, initial_state, final_states, inputs, transition_table):
-        self.inputs = frozenset(inputs)
-        self.initial_state = initial_state
-        self.final_states = final_states
-        self.transition_table = transition_table
-
-    def isFinal(self, state):
-        return state in self.final_states
-
-    def __str__(self):
-        x = "<NFA initial_state:%s final_states:%s \n" % (
-            self.initial_state,
-            self.final_states
-        )
-
-        for state in self.transition_table:
-            x+="state:[%s] " %(state)
-            for inp in self.transition_table[state]:
-                x+="%s->%s , "% (inp,self.transition_table[state][inp])
-            x+="\n"
-
-        return x
-
+from nfa import *
 
 def and_translate(nfa1,nfa2):
     counter = 0
@@ -50,8 +27,7 @@ def and_translate(nfa1,nfa2):
     nfa1.final_states= new_final_states
 
     ############################################
-    if len(nfa1.final_states) == 1 :    
-        counter -=1
+    dict = {}
 
     for state in nfa2.transition_table.keys():
         dict[state] = counter
@@ -92,18 +68,32 @@ def and_nfa(nfa1,nfa2):
 
     nfa1, nfa2= and_translate(nfa1,nfa2)
 
-    
-
-
     #if 1 final state
     if len(nfa1.final_states) == 1 :
+        nfa1_final_state  = next(iter(nfa1.final_states))
+        nfa2_intial_state = nfa2.initial_state
+
+
+
+        for state in nfa1.transition_table.keys():
+            for inp in nfa1.transition_table[state]:
+                for i in range(len(nfa1.transition_table[state][inp])):
+                    if nfa1.transition_table[state][inp][i] == nfa1_final_state:
+                        nfa1.transition_table[state][inp][i] = nfa2_intial_state
+                    #print(nfa1.transition_table[state][inp][i])# = dict[nfa2.transition_table[state][inp][i]]
+
         nfa1.transition_table.pop(next(iter(nfa1.final_states)))
+
+
+
+
+
         return NFA(nfa1.initial_state, nfa2.final_states, new_inputs, Merge(nfa1.transition_table, nfa2.transition_table))
 
     # more than 1 final state
     else:
         for state in nfa1.final_states:
-            nfa1.transition_table[state]["e"]=[nfa2.initial_state]
+            nfa1.transition_table[state][""]=[nfa2.initial_state]
         return NFA(nfa1.initial_state, nfa2.final_states, new_inputs, Merge(nfa1.transition_table, nfa2.transition_table))
 
     
@@ -112,10 +102,16 @@ def and_nfa(nfa1,nfa2):
 
 
 # multiplle finals
-tt1 = {0: {"0": [0], "1": [1]}, 1: {"0": [2], "1": [3]}, 2: {"0": [], "1": []}, 3: {"0": [], "1": []}}
-nfa1 = NFA(0, {2,3}, ["0", "1"], tt1)
+tt1 = {5: {'0': [], '1': []}, 0: {'': [1, 3]}, 1: {'0': [2]}, 2: {'': [5]}, 3: {'1': [4]}, 4: {'': [5]}} 
+nfa1 = NFA(0, {5}, ["0", "1"], tt1)
 
-tt2 = {0: {"0": [0], "1": [1]}, 1: {"0": [2], "1": [2]}, 2: {"0": [], "1": []}}
-nfa2 = NFA(0, {2}, ["0", "1"], tt2)
+#nfa1.visualize()
 
-print(and_nfa(nfa1, nfa2))
+tt2 = {0: {'.': [1]}, 1: {}} 
+nfa2 = NFA(0, {1}, ["."], tt2)
+
+#nfa2.visualize()
+
+nfa = and_nfa(nfa1, nfa2)
+print(nfa)
+nfa.visualize()

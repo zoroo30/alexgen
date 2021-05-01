@@ -1,7 +1,7 @@
 letter = a-c | A-C
-digit = 0 - 2
+digit = 0 - 1
 id: letter (letter|digit)*
-idk: ab\+bc
+idk: digit+ | digit+ a
 digits = digit*
 {boolean int float}
 num: digit+ | digit+ . digits( \L | E digits)

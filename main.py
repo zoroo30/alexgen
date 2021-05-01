@@ -3,7 +3,6 @@ from lex_rules import generate_rules
 from range_gen_nfa import range_gen_nfa
 from or_nfa import  nfa_or_op
 from closure_nfa import closure_nfa
-from infix_postfix import infix_to_postfix
 
 
 # closure nfa uses
@@ -39,10 +38,12 @@ print("")
 
 nfa_list = []
 
-print(postfix_regex)
+print(regex['idk'])
+print(postfix_regex['idk'])
 
 print("````````````````````````````````````````")
 
+NFA(postfix=postfix_regex['idk'])
 
 """
 for key in postfix_regex.keys():

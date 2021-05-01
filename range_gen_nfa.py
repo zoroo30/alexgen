@@ -1,5 +1,5 @@
 from nfa import *
-from or_nfa import nfa_or_op
+#from or_nfa import nfa_or_op
 
 
 def range_gen_nfa(nfa1,nfa2):

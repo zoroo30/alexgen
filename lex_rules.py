@@ -73,6 +73,7 @@ def stuff(regex,regdef):
 
 	OPERATORS = ['+', '-', '*', '(', ')','.','|'] # set of operators
 
+	print(regex)
 	for key in regex.keys():
 
 		# i save the index of where i want to add a dot so that i dont modify the len of the string while doing the operations
@@ -84,6 +85,9 @@ def stuff(regex,regdef):
 			if regex[key][i] ==")" and regex[key][i+1] not in OPERATORS:
 				put_dot.append(i)
 
+			elif  regex[key][i-1]=="\\" and regex[key][i+1] not in OPERATORS:
+				put_dot.append(i)
+				
 			elif regex[key][i+1] =="(" and regex[key][i] not in OPERATORS or regex[key][i+1] =="(" and regex[key][i-1]=="\\":
 				put_dot.append(i)
 
@@ -203,11 +207,10 @@ if __name__ == '__main__':
 	print(regex)
 	#print(regdef)
 	print(keywords)
-	print(punctuation)
+	#print(punctuation)
 	#print(lexeme_id)
-	print(id_lexeme)
+	#print(id_lexeme)
 
 	print("~"*50)
 
-	print(punctuation)
-	print(punctuation[1])
+	
