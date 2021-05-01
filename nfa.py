@@ -4,6 +4,9 @@
 from pyvis.network import Network
 import random
 
+OPERATORS_1 = set(['+', '*',])  # set of operators
+OPERATORS_2 = set(['-', '.','|'])
+
 class NFA:
     def __init__(self, initial_state=0, final_states={}, inputs=[], transition_table={}, postfix=None):
 
@@ -15,6 +18,32 @@ class NFA:
             self.alphabet =  frozenset(inputs)
         else:
             # TODO BASEM
+            #print(postfix)
+
+            stack = []
+
+            for i in range(len(postfix)):
+                if postfix[i] in OPERATORS_1:
+                    operand_1 = stack.pop()
+                elif postfix[i] in OPERATORS_2:
+                    operand_2_1 = stack.pop()
+                    operand_2_2 = stack.pop()
+                #add if thing is /
+                
+                # this is a character that i need to transform to NFA then push on stack
+                # but i realized i cant do that bec of the '-' operations as its takes input 2 char
+                # 2 options ; 1- change in the range to accept nfa
+                else:
+
+                    tt_temp = {0: { postfix[i]: [1]}, 1: {}}
+                    nfa_temp = NFA(0, {1}, postfix[i], tt_temp)
+
+                    stack.append(nfa_temp)
+
+                    pass 
+                    #
+
+
             print("HI BASEM")
             pass
 

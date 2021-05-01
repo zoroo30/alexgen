@@ -1,15 +1,7 @@
-letter = a-z | A-Z
-digit = 0 - 9
+letter = a-c | A-C
+digit = 0 - 2
 id: letter (letter|digit)*
-idk: letter|abc
-idk2: letter|digit*
-idk3: abc|aa|digits
-idk4: abc|aa|digit*
-idk5: digit* \+ digits
-idk6: digit* a digits
-idk7: digit digits
-idk8: a*b(c+a*b)*b+c
-idk9: (a|b)*ab
+idk: ab\+bc
 digits = digit*
 {boolean int float}
 num: digit+ | digit+ . digits( \L | E digits)

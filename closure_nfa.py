@@ -82,13 +82,15 @@ def closure_nfa(nfa_inp,type):
 
 if __name__ == '__main__':
     #test case
-    tt1 = {0: { "1": [1]}, 1: {}}
-    nfa1 = NFA(0, {1}, ["0", "1"], tt1)
 
-   
-    #print(nfa1)
-    #nfa1.visualize()
-    nfa = closure_nfa(nfa1,"+")
-    
-    print(nfa)
+    tt1 = {0: { "5": [1]}, 1: {}}
+    nfa1 = NFA(0, {1}, ["5"], tt1)
+    nfa1.visualize()
+    """
+    nfa = closure_nfa(nfa1,"*")
     nfa.visualize()
+
+
+    nfa_p = closure_nfa(nfa1,"+")
+    nfa_p.visualize()
+    """

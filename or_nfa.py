@@ -1,14 +1,5 @@
 from nfa import *
 
-# function that recieves a list of NFAs and combines them all into a single one
-def nfa_or_list(nfa_list):
-    combined = None  # initialize the combined NFA with None
-    for nfa in nfa_list:  # lopp over NFA list
-        combined = nfa_or_op(combined, nfa)  # combine 2 by 2
-
-    return combined  # return final combined NFA
-
-
 def nfa_or_op(nfa1, nfa2):  # OR operations between exctly 2 NFAs
 
     if nfa1 == None:
@@ -122,6 +113,7 @@ if __name__ == '__main__':
     transition_table_2 = {5: {'y': [], 'z': []}, 0: {'': [1, 3]}, 1: {'y': [2]}, 2: {'': [5]}, 3: {'z': [4]}, 4: {'': [5]}}
     nfa2 = NFA(0, {5}, ["y", "z"], transition_table_2)
 
-    nfs_list = [nfa1, nfa2]
+    nfa2.visualize()
 
-    print(nfa_or_op(nfa1,nfa2))
+
+    print(nfa_or_op(nfa1,nfa2).visualize())
