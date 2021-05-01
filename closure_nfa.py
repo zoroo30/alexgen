@@ -85,6 +85,7 @@ if __name__ == '__main__':
     tt1 = {0: { "1": [1]}, 1: {}}
     nfa1 = NFA(0, {1}, ["0", "1"], tt1)
 
+   
     #print(nfa1)
     #nfa1.visualize()
     nfa = closure_nfa(nfa1,"+")

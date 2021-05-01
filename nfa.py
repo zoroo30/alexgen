@@ -4,14 +4,20 @@
 from pyvis.network import Network
 import random
 
-
 class NFA:
-    def __init__(self, initial_state, final_states, inputs, transition_table):
-        self.inputs = frozenset(inputs)
-        self.initial_state = initial_state
-        self.final_states = final_states
-        self.transition_table = transition_table
-        self.alphabet =  frozenset(inputs)
+    def __init__(self, initial_state=0, final_states={}, inputs=[], transition_table={}, postfix=None):
+
+        if postfix == None:
+            self.inputs = frozenset(inputs)
+            self.initial_state = initial_state
+            self.final_states = final_states
+            self.transition_table = transition_table
+            self.alphabet =  frozenset(inputs)
+        else:
+            # TODO BASEM
+            print("HI BASEM")
+            pass
+
 
     def isFinal(self, state):
         return state in self.final_states
