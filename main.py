@@ -1,5 +1,6 @@
 from nfa import NFA
 from dfa import DFA
+from lexer import Lexer
 
 
 def main():
@@ -28,9 +29,14 @@ def main():
 
     nfa_1 = NFA(initial_state, final_states, alphabet, transition_table)
     dfa = DFA(nfa_1)
+    dfa.labels = labels
+    # nfa_1.visualize("nfa.html", labels)
+    # dfa.visualize("dfa.html", labels)
 
-    nfa_1.visualize("nfa.html", labels)
-    dfa.visualize("dfa.html", labels)
+    lexer = Lexer("", dfa)
+    tokens, errors = lexer._analyze("abbababba", 0)
+    print(tokens)
+    print(errors)
 
 
 if __name__ == "__main__":

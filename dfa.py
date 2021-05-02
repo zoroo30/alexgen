@@ -12,12 +12,13 @@ class DFA(FA):
         self.dead_states = set()
         self.transition_table = self._getTransitionTable(nfa)
         self.state_id = 0
-        self.current_state = self.initial_state
         self.labels = {}
         if minimize:
             self._minimize()
         if relax:
             self._relaxeStateNames()
+
+        self.current_state = self.initial_state
 
     def __str__(self):
         return (
