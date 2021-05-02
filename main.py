@@ -1,8 +1,7 @@
 from nfa import *
-from lex_rules import generate_rules
-from range_gen_nfa import range_gen_nfa
-from or_nfa import  nfa_or_op
-from closure_nfa import closure_nfa
+from lex_rules import *
+
+from Finalcombine import combine_NFA
 
 
 # closure nfa uses
@@ -38,12 +37,12 @@ print("")
 
 nfa_list = []
 
-print(regex['idk'])
-print(postfix_regex['idk'])
-
+print(regex)
 print("````````````````````````````````````````")
+print(postfix_regex)
 
-NFA(postfix=postfix_regex['idk'])
+
+NFA(postfix=postfix_regex['addop']).visualize()
 
 """
 for key in postfix_regex.keys():

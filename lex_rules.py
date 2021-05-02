@@ -1,11 +1,9 @@
 import re
 
-
-
 def infix_to_postfix(expression): #input expression
     
-    OPERATORS = set(['+', '-', '*', '(', ')','.','|'])  # set of operators
-    PRIORITY = {'|':1, '.':2, '+':3 ,'*':3, '-':4} # dictionary having priorities 
+    OPERATORS = set(['+', '-', '*','.','|','(',')'])  # set of operators
+    PRIORITY = {'|':1, '.':2, '+':4 ,'*':4, '-':4,} # dictionary having priorities 
     
     stack = [] # initially stack empty
     output = '' # initially output empty
@@ -87,11 +85,11 @@ def stuff(regex,regdef):
 
 			elif  regex[key][i-1]=="\\" and regex[key][i+1] not in OPERATORS:
 				put_dot.append(i)
-				
+
 			elif regex[key][i+1] =="(" and regex[key][i] not in OPERATORS or regex[key][i+1] =="(" and regex[key][i-1]=="\\":
 				put_dot.append(i)
 
-			elif  regex[key][i]  in ["*","+"] and (regex[key][i+1] not in OPERATORS or regex[key][i+1]=="\\"):
+			elif  regex[key][i]  in ["*","+"] and (regex[key][i+1] not in OPERATORS or regex[key][i+1]=="\\" or regex[key][i+1]=="("):
 				put_dot.append(i)
 
 			elif  regex[key][i]==")"  in OPERATORS and regex[key][i+1]=="(":
@@ -123,7 +121,6 @@ def construct_helper_dict(*args):
 		ref_dict[c] = total_list[c]
 
 	return ref_dict
-
 
 
 def generate_rules(fname):

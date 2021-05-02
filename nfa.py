@@ -5,24 +5,19 @@ from pyvis.network import Network
 import random
 import copy
 
-#from range_gen_nfa import range_gen_nfa
-#from or_nfa import  nfa_or_op
-#from closure_nfa import closure_nfa
-
 
 OPERATORS_1 = set(['+', '*', ])  # set of operators
 OPERATORS_2 = set(['-', '.', '|'])
 
 
 class NFA:
-	def __init__(self, initial_state=0, final_states={}, inputs=[], transition_table={}, postfix=None):
+	def __init__(self, initial_state=0, final_states={}, alphabet=[], transition_table={}, postfix=None):
 
 		if postfix == None:
-			self.inputs = frozenset(inputs)
 			self.initial_state = initial_state
 			self.final_states = final_states
 			self.transition_table = transition_table
-			self.alphabet = frozenset(inputs)
+			self.alphabet = frozenset(alphabet)
 		else:
 			# TODO BASEM
 			#print(postfix)
@@ -31,13 +26,19 @@ class NFA:
 
 			i = 0
 			while i < (len(postfix)):
-				print(postfix[i])
+				#print(postfix[i])
 
 				if postfix[i] == "\\":
 
-					tt_temp = {0: {postfix[i+1]: [1]}, 1: {}}
-					nfa_temp = NFA(0, {1}, postfix[i+1], tt_temp)
-					stack.append(nfa_temp)
+					# if \L we agreed that this is EPS char
+					if postfix[i+1] =="L":
+						tt_temp = {0: {"": [1]}, 1: {}}
+						nfa_temp = NFA(0, {1}, "", tt_temp)
+						stack.append(nfa_temp)
+					else:
+						tt_temp = {0: {postfix[i+1]: [1]}, 1: {}}
+						nfa_temp = NFA(0, {1}, postfix[i+1], tt_temp)
+						stack.append(nfa_temp)
 
 					i += 2
 					continue
@@ -58,8 +59,8 @@ class NFA:
 						stack.append(and_nfa(operand_2_1, operand_2_2))
 
 					elif postfix[i] == "|":
-						print(operand_2_1)
-						print(operand_2_2)
+						#print(operand_2_1)
+						#print(operand_2_2)
 
 						#operand_2_1.visualize()
 						#operand_2_2.visualize()
@@ -82,19 +83,27 @@ class NFA:
 					#
 				i += 1
 
+			if len(stack) != 1:
+				raise ValueError('stack should have only 1 nfa left before poping')
+
 			final_nfa = stack.pop()
 
-			final_nfa.visualize()
+			self.alphabet = final_nfa.alphabet
+			self.initial_state = final_nfa.initial_state
+			self.final_states = final_nfa.final_states
+			self.transition_table = final_nfa.transition_table
+			self.alphabet = frozenset(final_nfa.alphabet)
+
 			pass
 
 	def isFinal(self, state):
 		return state in self.final_states
 
 	def __str__(self):
-		x = "<NFA initial_state:%s final_states:%s inputs:%s \n transition_table:%s \n" % (
+		x = "<NFA initial_state:%s final_states:%s alphabet:%s \n transition_table:%s \n" % (
 			self.initial_state,
 			self.final_states,
-			self.inputs,
+			self.alphabet,
 			self.transition_table,
 		)
 
@@ -156,16 +165,16 @@ class NFA:
 
 def range_gen_nfa(nfa1, nfa2):
 
-	# i adjusted it to accept nfa as inputs
-	first_char = next(iter(nfa1.inputs))
-	last_char = next(iter(nfa2.inputs))
+	# i adjusted it to accept nfa as alphabet
+	first_char = next(iter(nfa1.alphabet))
+	last_char = next(iter(nfa2.alphabet))
 
 	# if order is wrong swap
 	if first_char > last_char:
 		first_char, last_char = last_char, first_char
 
 	counter = 1
-	inputs = []
+	alphabet = []
 	tt = {}
 	total = (ord(last_char)-ord(first_char) + 1)*2+1
 	final_states = {total}
@@ -177,7 +186,7 @@ def range_gen_nfa(nfa1, nfa2):
 
 	for i in range(ord(first_char), ord(last_char)+1):
 		tt[0][""].append(counter)
-		inputs.append(chr(i))
+		alphabet.append(chr(i))
 		tt[total][chr(i)] = []
 
 		tt[counter] = {}
@@ -187,7 +196,7 @@ def range_gen_nfa(nfa1, nfa2):
 		tt[counter+1][""] = [total]
 		counter += 2
 
-	nfa = NFA(0, final_states, inputs, tt)
+	nfa = NFA(0, final_states, alphabet, tt)
 
 	return nfa
 
@@ -263,7 +272,7 @@ def closure_nfa(nfa_inp, type):
 
 	# update final
 	nfa.transition_table[counter] = {}
-	for inp in nfa.inputs:
+	for inp in nfa.alphabet:
 		nfa.transition_table[counter] = Merge(
 			nfa.transition_table[counter], {inp: []})
 
@@ -331,7 +340,7 @@ def and_nfa(nfa1, nfa2):
     if nfa2 == None:  # same as above
         return nfa1
 
-    new_inputs = nfa1.inputs.union(nfa2.inputs)
+    new_alphabet = nfa1.alphabet.union(nfa2.alphabet)
 
     nfa1, nfa2 = and_translate(nfa1, nfa2)
 
@@ -349,13 +358,13 @@ def and_nfa(nfa1, nfa2):
 
         nfa1.transition_table.pop(next(iter(nfa1.final_states)))
 
-        return NFA(nfa1.initial_state, nfa2.final_states, new_inputs, Merge(nfa1.transition_table, nfa2.transition_table))
+        return NFA(nfa1.initial_state, nfa2.final_states, new_alphabet, Merge(nfa1.transition_table, nfa2.transition_table))
 
     # more than 1 final state
     else:
         for state in nfa1.final_states:
             nfa1.transition_table[state][""] = [nfa2.initial_state]
-        return NFA(nfa1.initial_state, nfa2.final_states, new_inputs, Merge(nfa1.transition_table, nfa2.transition_table))
+        return NFA(nfa1.initial_state, nfa2.final_states, new_alphabet, Merge(nfa1.transition_table, nfa2.transition_table))
 
 
 def nfa_or_op(nfa1, nfa2):  # OR operations between exctly 2 NFAs
@@ -370,7 +379,7 @@ def nfa_or_op(nfa1, nfa2):  # OR operations between exctly 2 NFAs
 
 		# A function that adjusts the output state names for one state in the old NFA
 		def translate_states(tt, state, stateTranslator, num):
-			for key in tt[state].keys():  # loop over all the possible inputs for the state
+			for key in tt[state].keys():  # loop over all the possible alphabet for the state
 				# loop over all the output states we go to from the the current possible input
 				for i, output_state in enumerate(tt[state][key]):
 					# change its name using the Translator mapping
@@ -413,12 +422,12 @@ def nfa_or_op(nfa1, nfa2):  # OR operations between exctly 2 NFAs
 	if nfa2 == None:  # same as above
 		return nfa1
 
-	# combine the inputs of both NFAs using union
-	new_inputs = nfa1.inputs.union(nfa2.inputs)
+	# combine the alphabet of both NFAs using union
+	new_alphabet = nfa1.alphabet.union(nfa2.alphabet)
 
 	# add the things in lecture first then loop over the two state list and add them .. try to do good
 	final_state_dict = {}  # initialize the output state dict if the final state
-	for input in new_inputs:  # for all inputs in this combined NFA
+	for input in new_alphabet:  # for all alphabet in this combined NFA
 		final_state_dict[str(input)] = []  # Put an empty array
 
 	# add in the merged tt an initial state and put for it epsilon output that sends to teh first state of first NFA
@@ -435,7 +444,7 @@ def nfa_or_op(nfa1, nfa2):  # OR operations between exctly 2 NFAs
 		nfa1, merged_tt, old_to_new_state_translator, '1')
 
 	# add the first state number of first nfa as an output of initial state
-	state_num = old_to_new_state_translator[str(nfa2.initial_state) + '1']
+	state_num = old_to_new_state_translator[str(nfa1.initial_state) + '1']
 	merged_tt[0][""].append(state_num)
 
 	# add the first state number of second nfa as an output of initial state
@@ -453,7 +462,7 @@ def nfa_or_op(nfa1, nfa2):  # OR operations between exctly 2 NFAs
 	for state in final_states:
 		merged_tt[state][''] = [stateCounter]
 
-	new = NFA(0, {stateCounter}, new_inputs, merged_tt)  # init the new NFA
+	new = NFA(0, {stateCounter}, new_alphabet, merged_tt)  # init the new NFA
 
 	return new  # return the new NFA
 

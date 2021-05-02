@@ -1,13 +1,12 @@
 letter = a-c | A-C
-digit = 0 - 1
-id: letter (letter|digit)*
-idk: digit+ | digit+ a
-digits = digit*
-{boolean int float}
-num: digit+ | digit+ . digits( \L | E digits)
-relop: \=\= | !\= | > | >\= | < | <\=
-assign: =
-{if else while}
-[; . , \( \) { }]
+digit = 0 - 2
+digits = digit+
+{program var integer}
+num: digit+ | digit+ . digits ( \L | E digits)
+relop: \= | <> | > | >\= | < | <\=
+assign: \:\=
+{real begin end if else then while do read write}
 addop: \+ | -
-mulop: \*
+mulop: \* | /
+[: ; , . \(\)]
+id: letter (letter|digit)*
