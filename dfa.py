@@ -236,7 +236,12 @@ class DFA(FA):
         return transition_table
 
     def apply(self, ch):
+        if not ch in self.transition_table[self.current_state]:
+            self.current_state = self.initial_state
+            raise Exception("Wrong input!")
+
         self.current_state = self.transition_table[self.current_state][ch]
+
         if self.current_state in self.dead_states:
             self.current_state = self.initial_state
             raise Exception("Dead state!")

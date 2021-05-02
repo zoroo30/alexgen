@@ -34,7 +34,7 @@ def main():
     # dfa.visualize("dfa.html", labels)
 
     lexer = Lexer("", dfa)
-    tokens, errors = lexer._analyze("abbababba", 0)
+    tokens, errors = lexer._analyze("a bba bab ba", 0)
     print(tokens)
     print(errors)
 
