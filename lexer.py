@@ -1,0 +1,44 @@
+class Lexer:
+    def __init__(self, input_file, dfa):
+        self.input_file = input_file
+        self.dfa = dfa
+        self.lines = self._preprocess()
+
+    def _preprocess(self):
+        return []
+
+    def _scanner(self):
+        tokens = []
+        errors = []
+        return tokens, errors
+
+    def _analyze(self, word, line_number):
+        errors = []
+        tokens = []
+        acceptance_state = None
+
+        i = 0
+        while i < len(word):
+            try:
+                result = self.dfa.apply(word[i])
+                acceptance_state = result
+            except:
+                if acceptance_state == None:
+                    error = {
+                        "line_number": line_number,
+                        "word": word,
+                        "ch": word[i],
+                        "char_index": i,
+                    }
+                    errors.append(error)
+                else:
+                    tokens.append(acceptance_state)
+                    acceptance_state = None
+                    i -= 1
+
+            i += 1
+
+        if acceptance_state != None:
+            tokens.append(acceptance_state)
+
+        return tokens, errors
