@@ -4,25 +4,33 @@ from dfa import DFA
 
 def main():
     # NFA
+    labels = {
+        0: "p1",
+        1: "p2",
+        2: "p3",
+    }
     initial_state = {0}
-    final_states = {2: 0}
-    alphabet = {0, 1}
+    final_states = {3: 0, 7: 1, 10: 2}
+    alphabet = {"a", "b"}
     transition_table = {
-        0: {0: {1}, 1: {5}},
-        1: {0: {6}, 1: {2}},
-        2: {0: {0}, 1: {2}},
-        3: {0: {2}, 1: {6}},
-        4: {0: {7}, 1: {5}},
-        5: {0: {2}, 1: {6}},
-        6: {0: {6}, 1: {4}},
-        7: {0: {6}, 1: {2}},
+        0: {"": {1, 4, 8}},
+        1: {"b": {2}},
+        2: {"a": {3}},
+        3: {},
+        4: {"b": {5}},
+        5: {"a": {6}},
+        6: {"b": {7}},
+        7: {},
+        8: {"b": {9}},
+        9: {"": {10}, "b": {9}},
+        10: {"a": {10}},
     }
 
     nfa_1 = NFA(initial_state, final_states, alphabet, transition_table)
     dfa = DFA(nfa_1)
 
-    nfa_1.visualize("nfa.html")
-    dfa.visualize("dfa.html")
+    nfa_1.visualize("nfa.html", labels)
+    dfa.visualize("dfa.html", labels)
 
 
 if __name__ == "__main__":

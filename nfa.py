@@ -6,6 +6,7 @@ class NFA(FA):
         self.alphabet = alphabet
         self.initial_state = initial_state
         self.final_states = final_states
+        self.dead_states = set()
         self.transition_table = transition_table
 
     def isFinal(self, states_set):

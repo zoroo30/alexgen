@@ -9,6 +9,7 @@ class DFA(FA):
         self.alphabet = nfa.alphabet
         self.initial_state = nfa.initial_state
         self.final_states = {}
+        self.dead_states = set()
         self.transition_table = self._getTransitionTable(nfa)
         self.state_id = 0
         self.current_state = self.initial_state
@@ -64,9 +65,10 @@ class DFA(FA):
 
         # flag to detect initial state
         is_initial_state = current_state == self.initial_state
+        if is_initial_state:
+            current_state = self._getEClousre(nfa.transition_table, current_state)
 
         # add state to transition table
-        current_state = self._getEClousre(nfa.transition_table, current_state)
         transitions = self._getTransitions(nfa.transition_table, current_state)
         transition_table[current_state] = transitions
 
@@ -109,9 +111,15 @@ class DFA(FA):
 
         initial_state = states_dict[frozenset(self.initial_state)]
 
+        dead_states = set()
+        for state in self.dead_states:
+            if not state in self.final_states:
+                dead_states.add(states_dict[state])
+
         self.transition_table = transition_table
         self.final_states = final_states
         self.initial_state = initial_state
+        self.dead_states = dead_states
 
     def _getTransitionTable(self, nfa):
         transition_table = {}
@@ -165,12 +173,22 @@ class DFA(FA):
 
     def _createTransitionTable(self, pr):
         transition_table = {}
+        dead_states = set()
         for state in pr:
             transition_table.setdefault(state, {})
+            is_dead_state = True
             for ch in self.alphabet:
                 transition_table[state].setdefault(
                     ch, pr[self.transition_table[getElement(state)][ch]]
                 )
+                if state != pr[self.transition_table[getElement(state)][ch]]:
+                    is_dead_state = False
+
+            if is_dead_state:
+                dead_states.add(state)
+
+        if dead_states:
+            self.dead_states = dead_states
 
         final_states = {}
         for state in self.final_states:
@@ -203,8 +221,6 @@ class DFA(FA):
                 for r in refinement.values():
                     pr.refine(r)
 
-            # print(pr._sets.values())
-
         pr.freeze()
 
         (
@@ -214,7 +230,5 @@ class DFA(FA):
         ) = self._createTransitionTable(pr)
 
         self.state_id = 0
-        # print(self.transition_table)
-        # self._relaxeStateNames()
 
         return transition_table
