@@ -5,11 +5,30 @@ class Lexer:
         self.lines = self._preprocess()
 
     def _preprocess(self):
-        return []
+        # read input test program
+        try:
+            with open("program.txt", "r") as f:
+                program = f.readlines()
+        except:
+            print("An error occured opening the file!")
+
+        # Remove whitespace characters(\t,\n)
+        program = list(map(str.strip, program))
+
+        # split each line by space
+        program = list(map(str.split, program))
+
+        return program
 
     def _scanner(self):
         tokens = []
         errors = []
+        for line_num, words in enumerate(self.lines):
+            for word in words:
+                _tokens, _errors = self._analyze(word, line_num)
+                tokens.append(_tokens)
+                errors.append(_errors)
+
         return tokens, errors
 
     def _analyze(self, word, line_number):
