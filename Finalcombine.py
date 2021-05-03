@@ -15,7 +15,7 @@ def add_states(nfa, merged_dict, stateTranslator, num):
         return
 
     nfa_states = nfa.transition_table.keys()  # get all states of the NFA
-    old_final_states = set()
+    old_final_states = {}
     for state in nfa_states:  # loop over states
         # get the new name from the translator
         new_state_number = stateTranslator[str(state) + num]
@@ -25,7 +25,7 @@ def add_states(nfa, merged_dict, stateTranslator, num):
         merged_dict[new_state_number] = nfa.transition_table[state]
         if nfa.isFinal(state):  # if the state is final
             # add the new name of the old final state so make it point to the final state of the combined NFA at the end
-            old_final_states.add(new_state_number)
+            old_final_states[new_state_number] = nfa.final_states[state]
     # return the merged dict and old final states
     return merged_dict, old_final_states
 
@@ -49,7 +49,7 @@ def combine_NFA(nfa_list):
     stateCounter = 1  # initialize state counters
 
     new_alphabet = set()
-    final_states = set()
+    final_states = {}
     for idx, nfa in enumerate(nfa_list):
         # combine the alphabet of both NFAs using union
         new_alphabet = new_alphabet.union(nfa.alphabet)
@@ -63,25 +63,27 @@ def combine_NFA(nfa_list):
         merged_tt, old_final_states = add_states(  # add states of current NFA to the combined merged
             nfa, merged_tt, old_to_new_state_translator, str(idx))
 
-        final_states = final_states.union(old_final_states)
+        #final_states = final_states.union(old_final_states)
+        final_states = {**final_states, **old_final_states}
 
     new = NFA(0, final_states, new_alphabet, merged_tt)  # init the new NFA
     return new  # return final combined NFA
 
+
 if __name__ == '__main__':
-    #test case
+    # test case
 
     transition_table_1 = {0: {"0": [], "1": [1]}, 1: {"0": [], "1": []}}
-    nfa1 = NFA(0, {1}, ["0", "1"], transition_table_1)
-
+    nfa1 = NFA(0, {1: 40}, ["0", "1"], transition_table_1)
 
     # nfa example
     transition_table_2 = {0: {"0": [], "1": [1]}, 1: {"0": [], "1": []}}
-    nfa2 = NFA(0, {1}, ["0", "1"], transition_table_2)
+    nfa2 = NFA(0, {1: 50}, ["0", "1"], transition_table_2)
 
     nfs_list = [nfa1, nfa2]
 
-    print(combine_NFA(nfs_list).visualize())
+    print(combine_NFA(nfs_list))
+    # .visualize())
 
 
 # <NFA initial_state:0

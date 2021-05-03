@@ -13,14 +13,6 @@ nfa_list = []
 print(id_lexeme)
 print(lexeme_id)
 
-for i in range(len(postfix_punctuation)):
-	#print(punctuation[i])
-	id = lexeme_id[punctuation[i]]
-	nfa = NFA(postfix=postfix_punctuation[i])
-	nfa.final_states = {next(iter(nfa.final_states)):id}
-	
-	nfa_list.append(nfa)
-	pass
 
 
 for i in range(len(postfix_keywords)):
@@ -31,6 +23,13 @@ for i in range(len(postfix_keywords)):
 	pass
 
 
+for i in range(len(postfix_punctuation)):
+	id = lexeme_id[punctuation[i]]
+	nfa = NFA(postfix=postfix_punctuation[i])
+	nfa.final_states = {next(iter(nfa.final_states)):id}
+	nfa_list.append(nfa)
+	pass
+
 
 for key in postfix_regex:
 	id = lexeme_id[key]
@@ -39,6 +38,7 @@ for key in postfix_regex:
 	nfa_list.append(nfa)	
 	pass
 
+
 final_nfa = combine_NFA(nfa_list)
 print(final_nfa)
-
+#final_nfa.visualize()
