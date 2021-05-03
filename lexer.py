@@ -1,13 +1,13 @@
 class Lexer:
-    def __init__(self, input_file, dfa):
-        self.input_file = input_file
+    def __init__(self, input_file_path, dfa):
+        self.input_file_path = input_file_path
         self.dfa = dfa
         self.lines = self._preprocess()
 
     def _preprocess(self):
         # read input test program
         try:
-            with open("program.txt", "r") as f:
+            with open(self.input_file_path, "r") as f:
                 program = f.readlines()
         except:
             print("An error occured opening the file!")
@@ -20,18 +20,7 @@ class Lexer:
 
         return program
 
-    def _scanner(self):
-        tokens = []
-        errors = []
-        for line_num, words in enumerate(self.lines):
-            for word in words:
-                _tokens, _errors = self._analyze(word, line_num)
-                tokens.append(_tokens)
-                errors.append(_errors)
-
-        return tokens, errors
-
-    def _analyze(self, word, line_number):
+    def _analyze(self, word, line_number, word_num):
         errors = []
         tokens = []
         acceptance_state = None
@@ -45,9 +34,10 @@ class Lexer:
                 if acceptance_state == None:
                     error = {
                         "line_number": line_number,
+                        "word_index": word_num,
+                        "char_index": i,
                         "word": word,
                         "ch": word[i],
-                        "char_index": i,
                     }
                     errors.append(error)
                 else:
@@ -59,5 +49,33 @@ class Lexer:
 
         if acceptance_state != None:
             tokens.append(acceptance_state)
+            self.dfa.reset()
 
         return tokens, errors
+
+    def analyze(self):
+        tokens = []
+        errors = []
+        for line_num, words in enumerate(self.lines):
+            for word_num, word in enumerate(words):
+                _tokens, _errors = self._analyze(word, line_num, word_num)
+                tokens.append(_tokens)
+                errors.append(_errors)
+
+        self.tokens = tokens
+        self.errors = errors
+
+        return tokens, errors
+
+    def _writeOutput(self, file_path, words):
+        try:
+            with open(file_path, "w") as f:
+                for word in words:
+                    for item in word:
+                        f.write(str(item) + "\n")
+        except:
+            print("An error occured opening the file!")
+
+    def writeOutput(self, tokens_file_path="tokens.txt", errors_file_path="errors.txt"):
+        self._writeOutput(tokens_file_path, self.tokens)
+        self._writeOutput(errors_file_path, self.errors)

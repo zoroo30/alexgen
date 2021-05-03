@@ -33,10 +33,9 @@ def main():
     # nfa_1.visualize("nfa.html", labels)
     # dfa.visualize("dfa.html", labels)
 
-    lexer = Lexer("", dfa)
-    tokens, errors = lexer._analyze("abbababba", 0)
-    print(tokens)
-    print(errors)
+    lexer = Lexer("program.txt", dfa)
+    lexer.analyze()
+    lexer.writeOutput()
 
 
 if __name__ == "__main__":
