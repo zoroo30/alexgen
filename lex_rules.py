@@ -1,45 +1,56 @@
 import re
 
 def infix_to_postfix(expression): #input expression
-    
-    OPERATORS = set(['+', '-', '*','.','|','(',')'])  # set of operators
-    PRIORITY = {'|':1, '.':2, '+':4 ,'*':4, '-':4,} # dictionary having priorities 
-    
-    stack = [] # initially stack empty
-    output = '' # initially output empty
+	
+	OPERATORS = set(['+', '-', '*','.','|','(',')'])  # set of operators
+	PRIORITY = {'|':1, '.':2, '+':4 ,'*':4, '-':4,} # dictionary having priorities 
+	
+	stack = [] # initially stack empty
+	output = '' # initially output empty
 
-    for ch in expression:
-        if ch not in OPERATORS:  # if an operand then put it directly in postfix expression
-            output+= ch
+	i = 0
+	while i < len(expression):
+		
+		ch = expression[i]
+		
+		if ch =="\\":
+			ch = expression[i+1]
+			output+="\\"+ch
+			i+=2
+			continue
+		
+		if ch not in OPERATORS:  # if an operand then put it directly in postfix expression
+			output+= ch
 
-        elif ch=='(':  # else operators should be put in stack
-            stack.append('(')
+		elif ch=='(':  # else operators should be put in stack
+			stack.append('(')
 
-        elif ch==')':
-            while stack and stack[-1]!= '(':
-                output+=stack.pop()
-            stack.pop()
+		elif ch==')':
+			while stack and stack[-1]!= '(':
+				output+=stack.pop()
+			stack.pop()
 
-        else:
-            # lesser priority can't be on top on higher or equal priority    
-            # so pop and put in output   
-            while stack and stack[-1]!='(' and PRIORITY[ch]<=PRIORITY[stack[-1]]:
-                output+=stack.pop()
+		else:
+			# lesser priority can't be on top on higher or equal priority    
+			# so pop and put in output   
+			while stack and stack[-1]!='(' and PRIORITY[ch]<=PRIORITY[stack[-1]]:
+				output+=stack.pop()
+			stack.append(ch)
+		i+=1
 
-            stack.append(ch)
-    while stack:
-        output+=stack.pop()
+	while stack:
+		output+=stack.pop()
 
-    return output
+	return output
 
 
 def extract_symbols(regdef):
 	sym = {}
-	for k,v in regdef.items():
+	for k, v in regdef.items():
 		if k == "letter":
 			sym[k] = []
 			v = v.split("|")
-			for  a in v:
+			for a in v:
 				sym[k].append(a.split("-"))
 		elif k == "digit":
 			sym[k] = []
@@ -47,6 +58,52 @@ def extract_symbols(regdef):
 		else:
 			sym[k] = v
 	return sym
+
+
+OPERATORS = ['+', '-', '*', '(', ')','.','|',] # set of operators
+
+def put_dot(string):
+	put_dot = []
+	i = 0
+	while  i < (len(string)-1):
+		#print(string[i])
+
+
+		if string[i] ==")" and ( string[i+1] not in OPERATORS or string[i+1]=="(" ):
+			put_dot.append(i)
+
+		elif  string[i]=="\\":
+			try:
+				if string[i+2] not in OPERATORS:
+					put_dot.append(i+1)
+					i+=2
+					continue
+			except:
+				pass
+
+		elif string[i+1] =="(" and string[i] not in OPERATORS or string[i+1] =="(" and string[i-1]=="\\":
+			put_dot.append(i)
+
+		elif  string[i]  in ["*","+"] and (string[i+1] not in OPERATORS or string[i+1]=="\\" or string[i+1]=="("):
+			put_dot.append(i)
+
+
+		elif string[i+1] not in OPERATORS and string[i] not in OPERATORS:
+			if string[i]=='\\':
+				i+=1
+				continue
+
+			put_dot.append(i)
+		i+=1
+
+	#each time i add a dot i increadse the counter bec i changed the len of the string
+	counter=1
+
+	for j in put_dot:
+		string = string[:j+counter] + "." + string[j+counter:]
+		counter+=1
+
+	return string.strip()
 
 
 def stuff(regex,regdef):
@@ -69,44 +126,9 @@ def stuff(regex,regdef):
 	# as i said in postfix stuff i need smth to tell me that im doing the concat operation
 	# so this is my attempt to add a dot "."  to indicate the concat oepration
 
-	OPERATORS = ['+', '-', '*', '(', ')','.','|'] # set of operators
 
-	print(regex)
 	for key in regex.keys():
-
-		# i save the index of where i want to add a dot so that i dont modify the len of the string while doing the operations
-		put_dot = []
-
-
-		for i in range(len(regex[key])-1):
-
-			if regex[key][i] ==")" and regex[key][i+1] not in OPERATORS:
-				put_dot.append(i)
-
-			elif  regex[key][i-1]=="\\" and regex[key][i+1] not in OPERATORS:
-				put_dot.append(i)
-
-			elif regex[key][i+1] =="(" and regex[key][i] not in OPERATORS or regex[key][i+1] =="(" and regex[key][i-1]=="\\":
-				put_dot.append(i)
-
-			elif  regex[key][i]  in ["*","+"] and (regex[key][i+1] not in OPERATORS or regex[key][i+1]=="\\" or regex[key][i+1]=="("):
-				put_dot.append(i)
-
-			elif  regex[key][i]==")"  in OPERATORS and regex[key][i+1]=="(":
-				put_dot.append(i)
-
-			elif regex[key][i+1] not in OPERATORS and regex[key][i] not in OPERATORS:
-				if regex[key][i]=='\\':
-					continue
-
-				put_dot.append(i)
-
-		#each time i add a dot i increadse the counter bec i changed the len of the string
-		counter=1
-
-		for j in put_dot:
-			regex[key] = regex[key][:j+counter] + "." + regex[key][j+counter:]
-			counter+=1
+		regex[key] = put_dot(regex[key])
 		
 
 	
@@ -127,42 +149,46 @@ def generate_rules(fname):
 	regex = {}
 	postfix_regex = {}
 	regdef = {}
+
 	keywords = []
+	postfix_keywords = []
+
 	punctuation = []
+	postfix_punctuation = []
 	try:
 		with open(fname, 'r') as f:
 			file_text = f.readlines()
 	except:
 		print("An Error occured opening the file")
 
-
 	for line in file_text:
 
-		#Check Regular Expression
+		# Check Regular Expression
 		if re.search(r'\w+[:]\s', line):
-			line_tmp = line.replace(" ","").strip().split(":")
-			# ADDED 
-			regex[line_tmp[0]] = line_tmp[1].replace(".", "\\.").replace("-", "\\-")
+			line_tmp = line.replace(" ", "").strip().split(":", 1)
+			# ADDED
+			regex[line_tmp[0]] = line_tmp[1].replace(
+				".", "\\.").replace("-", "\\-")
 
-		#Check Regular Definition
+		# Check Regular Definition
 		elif re.search(r'\w+\s[=]', line):
-			line_tmp = line.replace(" ","").strip().split("=")
+			line_tmp = line.replace(" ", "").strip().split("=", 1)
 			regdef[line_tmp[0]] = line_tmp[1]
 
-		#Check Keywords 	
+		# Check Keywords
 		elif re.search(r'\A[{]', line):
 			line_tmp = line[1:-2].strip().split()
 			for l in line_tmp:
 				keywords.append(l)
 
-		#Check Punctuation
+		# Check Punctuation
 		elif re.search(r'\A\[', line):
 			line_tmp = line[1:-2].strip().split()
 			for l in line_tmp:
-				# ADDED 
-				if l ==".":
+				# ADDED
+				if l == ".":
 					l = '\\.'
-				elif l =="-":
+				elif l == "-":
 					l = '\\-'
 				punctuation.append(l)
 		else:
@@ -171,43 +197,50 @@ def generate_rules(fname):
 
 	regdef_simplifid = extract_symbols(regdef)
 	ref_dict = construct_helper_dict(keywords, punctuation, regex)
+	
 
-	# remove backslashes from stuff like \\. or \\(
-	# note the ref_dict is used for labeling the nfa so we dont need backslashes here
-	for key in ref_dict.keys():
-		if ref_dict[key][0]=="\\" and len(ref_dict) > 1:
-			ref_dict[key] = ref_dict[key][1:]
-
-	"""
-	print(regex)
-	print(regdef)
-	print(regdef_simplifid)
-	print(keywords)
-	print(punctuation)
-	print(ref_dict)
-	"""
 	stuff(regex,regdef)
 
 	for key in regex.keys():
 		postfix_regex[key] = infix_to_postfix(regex[key])
 
+	for i in range(len(keywords)):
+		postfix_keywords.append(infix_to_postfix(put_dot(keywords[i])))
+
+	# for punctuation dont doo shit
+	for i in range(len(punctuation)):
+		#print(punctuation[i])
+		#postfix_punctuation.append(punctuation[i])
+		postfix_punctuation.append(infix_to_postfix((put_dot(punctuation[i]))))
+
+		#print(postfix_punctuation[i])
+
 
 	# removed regdef_simplifid
-	return regex,postfix_regex, keywords, punctuation, ref_dict
+	return regex,postfix_regex, keywords,postfix_keywords, punctuation, postfix_punctuation, ref_dict
 
 if __name__ == '__main__':
 
 
-	regex,postfix_regex, keywords, punctuation,id_lexeme = generate_rules("rules.txt")
+	regex,postfix_regex, keywords, postfix_keywords, punctuation,postfix_punctuation,id_lexeme = generate_rules("rules.txt")
 	print("`"*50)
 
 	print(regex)
-	#print(regdef)
-	print(keywords)
+	print(postfix_regex)
+
+	#print(keywords)
+	#print(postfix_keywords)
+
 	#print(punctuation)
+	#print(postfix_punctuation)
+
+	#print(id_lexeme)
 	#print(lexeme_id)
 	#print(id_lexeme)
 
 	print("~"*50)
+
+	print(punctuation)
+	print(postfix_punctuation)
 
 	
