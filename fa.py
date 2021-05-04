@@ -1,4 +1,6 @@
 from pyvis.network import Network
+import os
+import webbrowser
 
 
 class FA:
@@ -65,4 +67,7 @@ class FA:
                         arrowStrikethrough=False,
                     )
 
-        g.show(output_file)
+        output_file = "output/visualization/" + output_file
+        os.makedirs(os.path.dirname(output_file), exist_ok=True)
+        g.write_html(output_file)
+        webbrowser.open("file://" + os.path.realpath(output_file))

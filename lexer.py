@@ -80,8 +80,6 @@ class Lexer:
         except:
             print("An error occured opening the file!")
 
-    def writeOutput(
-        self, tokens_file_path="output/tokens.txt", errors_file_path="output/errors.txt"
-    ):
-        self._writeOutput(tokens_file_path, self.tokens)
-        self._writeOutput(errors_file_path, self.errors)
+    def writeOutput(self, tokens_file_path="tokens.txt", errors_file_path="errors.txt"):
+        self._writeOutput("output/" + tokens_file_path, self.tokens)
+        self._writeOutput("output/" + errors_file_path, self.errors)

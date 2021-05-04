@@ -13,8 +13,8 @@ def main():
     lexer.analyze()
     lexer.writeOutput()
 
-    # final_nfa.visualize("test.html", id_lexeme)
-    # dfa.visualize("dfa.html", id_lexeme, False)
+    final_nfa.visualize("test.html", id_lexeme)
+    dfa.visualize("dfa.html", id_lexeme, False)
 
 
 if __name__ == "__main__":
