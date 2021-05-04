@@ -25,6 +25,7 @@ class NFA(FA):
     ):
         self.initial_state = initial_state
         self.final_states = final_states
+        self.dead_states = set()
         self.transition_table = transition_table
         self.alphabet = frozenset(alphabet)
         self.dead_states = set()
@@ -97,8 +98,16 @@ class NFA(FA):
             final_nfa.alphabet,
         )
 
-    def isFinal(self, state):
-        return state in self.final_states
+    def isFinal(self, states_set):
+        """return true if final state exist in states_set
+        also return its label
+        if multiple states are final state return the smallest label (heighst priority)
+        """
+        final_for = float("inf")
+        for state in states_set:
+            if state in self.final_states and self.final_states[state] < final_for:
+                final_for = self.final_states[state]
+        return final_for != float("inf"), final_for
 
     def isFinalSet(self, states_set):
         """return true if final state exist in states_set
