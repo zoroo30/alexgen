@@ -9,11 +9,11 @@ class FA:
         self.transition_table = {}
         self.dead_states = set()
 
-    def visualize(self, output_file, labels):
+    def visualize(self, output_file, labels, physics=True):
         g = Network(height="100%", width="100%", directed=True)
 
         g.set_edge_smooth("continuous")
-        g.toggle_physics(False)
+        g.toggle_physics(physics)
         for state in self.transition_table:
             border_width = 1
             border_width_selected = 2
