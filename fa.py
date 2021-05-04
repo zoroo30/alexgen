@@ -11,7 +11,7 @@ class FA:
         self.transition_table = {}
         self.dead_states = set()
 
-    def visualize(self, output_file, labels, physics=True):
+    def visualize(self, output_file, labels, physics=True, show_dead_states=False):
         g = Network(height="100%", width="100%", directed=True)
 
         g.set_edge_smooth("continuous")
@@ -33,6 +33,8 @@ class FA:
 
             if self.dead_states and state in self.dead_states:
                 color = "#ee6464"
+                if not show_dead_states:
+                    continue
 
             state = str(state)
 
@@ -47,6 +49,8 @@ class FA:
             )
 
         for state in self.transition_table:
+            if from_state in self.dead_states and not show_dead_states:
+                continue
             from_state = str(state)
             for ch in self.transition_table[state]:
                 if type(self).__name__ == "NFA":
@@ -59,6 +63,11 @@ class FA:
                             arrowStrikethrough=False,
                         )
                 else:
+                    if (
+                        self.transition_table[state][ch] in self.dead_states
+                        and not show_dead_states
+                    ):
+                        continue
                     to_state = str(self.transition_table[state][ch])
                     g.add_edge(
                         from_state,
