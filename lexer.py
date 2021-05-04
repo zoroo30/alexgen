@@ -1,3 +1,6 @@
+import os
+
+
 class Lexer:
     def __init__(self, input_file_path, dfa):
         self.input_file_path = input_file_path
@@ -9,16 +12,15 @@ class Lexer:
         try:
             with open(self.input_file_path, "r") as f:
                 program = f.readlines()
+                # Remove whitespace characters(\t,\n)
+                program = list(map(str.strip, program))
+
+                # split each line by space
+                program = list(map(str.split, program))
+
+                return program
         except:
             print("An error occured opening the file!")
-
-        # Remove whitespace characters(\t,\n)
-        program = list(map(str.strip, program))
-
-        # split each line by space
-        program = list(map(str.split, program))
-
-        return program
 
     def _analyze(self, word, line_number, word_num):
         errors = []
@@ -68,6 +70,8 @@ class Lexer:
         return tokens, errors
 
     def _writeOutput(self, file_path, words):
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+
         try:
             with open(file_path, "w") as f:
                 for word in words:
@@ -76,6 +80,8 @@ class Lexer:
         except:
             print("An error occured opening the file!")
 
-    def writeOutput(self, tokens_file_path="tokens.txt", errors_file_path="errors.txt"):
+    def writeOutput(
+        self, tokens_file_path="output/tokens.txt", errors_file_path="output/errors.txt"
+    ):
         self._writeOutput(tokens_file_path, self.tokens)
         self._writeOutput(errors_file_path, self.errors)

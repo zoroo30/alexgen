@@ -98,16 +98,8 @@ class NFA(FA):
             final_nfa.alphabet,
         )
 
-    def isFinal(self, states_set):
-        """return true if final state exist in states_set
-        also return its label
-        if multiple states are final state return the smallest label (heighst priority)
-        """
-        final_for = float("inf")
-        for state in states_set:
-            if state in self.final_states and self.final_states[state] < final_for:
-                final_for = self.final_states[state]
-        return final_for != float("inf"), final_for
+    def isFinal(self, state):
+        return state in self.final_states
 
     def isFinalSet(self, states_set):
         """return true if final state exist in states_set

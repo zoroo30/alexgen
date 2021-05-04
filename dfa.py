@@ -7,7 +7,7 @@ from utilities.sets import getElement
 class DFA(FA):
     def __init__(self, nfa, minimize=True, relax=True):
         self.alphabet = nfa.alphabet
-        self.initial_state = nfa.initial_state
+        self.initial_state = {nfa.initial_state}
         self.final_states = {}
         self.dead_states = set()
         self.transition_table = self._getTransitionTable(nfa)
@@ -79,7 +79,7 @@ class DFA(FA):
             self.initial_state = current_state
 
         # if final add to final states
-        is_final, final_for = nfa.isFinal(current_state)
+        is_final, final_for = nfa.isFinalSet(current_state)
         if is_final:
             self.final_states[current_state] = final_for
 
