@@ -163,6 +163,12 @@ def stuff(regex, regdef):
         regex[key] = put_dot(regex[key])
 
 
+def remove_backslach(word):
+    if len(word) > 0 and word[0] == "\\":
+        return word[1:]
+    return word
+
+
 def construct_helper_dict(*args):
     ref_dict = {}
     total_list = []
@@ -170,7 +176,7 @@ def construct_helper_dict(*args):
         total_list += l
 
     for c in range(len(total_list)):
-        ref_dict[c] = total_list[c]
+        ref_dict[c] = remove_backslach(total_list[c])
 
     return ref_dict
 
@@ -274,21 +280,21 @@ def generate_nfa(fname):
     # print(lexeme_id)
 
     for i in range(len(postfix_keywords)):
-        id = lexeme_id[keywords[i]]
+        id = lexeme_id[remove_backslach(keywords[i])]
         nfa = NFA(postfix=postfix_keywords[i])
         nfa.final_states = {next(iter(nfa.final_states)): id}
         nfa_list.append(nfa)
         pass
 
     for i in range(len(postfix_punctuation)):
-        id = lexeme_id[punctuation[i]]
+        id = lexeme_id[remove_backslach(punctuation[i])]
         nfa = NFA(postfix=postfix_punctuation[i])
         nfa.final_states = {next(iter(nfa.final_states)): id}
         nfa_list.append(nfa)
         pass
 
     for key in postfix_regex:
-        id = lexeme_id[key]
+        id = lexeme_id[remove_backslach(key)]
         nfa = NFA(postfix=postfix_regex[key])
         nfa.final_states = {next(iter(nfa.final_states)): id}
         nfa_list.append(nfa)

@@ -49,7 +49,7 @@ class FA:
             )
 
         for state in self.transition_table:
-            if from_state in self.dead_states and not show_dead_states:
+            if state in self.dead_states and not show_dead_states:
                 continue
             from_state = str(state)
             for ch in self.transition_table[state]:
