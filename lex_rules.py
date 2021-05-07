@@ -200,13 +200,13 @@ def generate_rules(fname):
     for line in file_text:
 
         # Check Regular Expression
-        if re.search(r"\w+[:]\s", line):
+        if re.search(r"\w+\s*[:]\s*", line):
             line_tmp = line.replace(" ", "").strip().split(":", 1)
             # ADDED
             regex[line_tmp[0]] = line_tmp[1].replace(".", "\\.").replace("-", "\\-")
 
         # Check Regular Definition
-        elif re.search(r"\w+\s[=]", line):
+        elif re.search(r"\w+\s*[=]\s*", line):
             line_tmp = line.replace(" ", "").strip().split("=", 1)
             regdef[line_tmp[0]] = line_tmp[1]
 

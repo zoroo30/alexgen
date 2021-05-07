@@ -1,7 +1,7 @@
-le = a-z
-di = 0-9
-bin: b(0|1)+
+le=    a-z
+di=   0-9
+bin:   b(0|1)+
 oct: o(0|1|2|3|4|5|6|7)+
-hex: h(di|A|B|C|D|E|F)+
-intconst: di+
-id: le(le|di)+
+hex:    h(di|A|B|C|D|E|F)+
+intconst:  di+
+id:  le(le|di)+
