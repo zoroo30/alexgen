@@ -22,6 +22,15 @@ class Lexer:
         except:
             print("An error occured opening the file!")
 
+    def _generateError(self, line_number, word_num, char_index, word, ch):
+        return {
+            "line_number": line_number,
+            "word_index": word_num,
+            "char_index": char_index,
+            "word": word,
+            "ch": ch,
+        }
+
     def _analyze(self, word, line_number, word_num):
         errors = []
         tokens = []
@@ -32,15 +41,12 @@ class Lexer:
             try:
                 result = self.dfa.apply(word[i])
                 acceptance_state = result
+                if result == None and i == len(word) - 1:
+                    error = self._generateError(line_number, word_num, i, word, word[i])
+                    errors.append(error)
             except:
                 if acceptance_state == None:
-                    error = {
-                        "line_number": line_number,
-                        "word_index": word_num,
-                        "char_index": i,
-                        "word": word,
-                        "ch": word[i],
-                    }
+                    error = self._generateError(line_number, word_num, i, word, word[i])
                     errors.append(error)
                 else:
                     tokens.append(acceptance_state)

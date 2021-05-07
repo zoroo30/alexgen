@@ -21,13 +21,23 @@ class DFA(FA):
         self.current_state = self.initial_state
 
     def __str__(self):
+        transition_table = {}
+        for state in self.transition_table:
+            if state in self.dead_states:
+                continue
+            transition_table[state] = {}
+            for ch in self.transition_table[state]:
+                if self.transition_table[state][ch] in self.dead_states:
+                    continue
+                transition_table[state][ch] = self.transition_table[state][ch]
+
         return (
             "<DFA initial_state:%s final_states:%s, alphabet:%s, transition_table:%s>"
             % (
                 self.initial_state,
                 self.final_states,
                 self.alphabet,
-                self.transition_table,
+                transition_table,
             )
         )
 

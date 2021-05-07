@@ -227,7 +227,7 @@ def generate_rules(fname):
                     l = "\\-"
                 punctuation.append(l)
         else:
-            print("Error, Rule not recognized")
+            print("Error, Rule not recognized", line)
             continue
 
     # regdef_simplifid = extract_symbols(regdef)
