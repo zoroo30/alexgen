@@ -1,7 +1,12 @@
-le=    a-z
-di=   0-9
-bin:   b(0|1)+
-oct: o(0|1|2|3|4|5|6|7)+
-hex:    h(di|A|B|C|D|E|F)+
-intconst:  di+
-id:  le(le|di)+
+letter = a-z | A-Z
+digit = 0 - 9
+digits = digit+
+{program var integer}
+num: digit+ | digit+ . digits ( \L | E digits)
+relop: \= | <> | > | >\= | < | <\=
+assign: \:\=
+{real begin end if else then while do read write}
+addop: \+ | -
+mulop: \* | /
+[: ; , . \( \)]
+id: letter (letter|digit)*
