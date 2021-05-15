@@ -70,8 +70,8 @@ class Lexer:
                 tokens.append(_tokens)
                 errors.append(_errors)
 
-        self.tokens = tokens
-        self.errors = errors
+        self.tokens = [item for sublist in tokens for item in sublist]
+        self.errors = [item for sublist in errors for item in sublist]
 
         return tokens, errors
 
@@ -81,11 +81,29 @@ class Lexer:
         try:
             with open(file_path, "w") as f:
                 for word in words:
-                    for item in word:
-                        f.write(str(item) + "\n")
+                    f.write(str(word) + "\n")
         except:
             print("An error occured opening the file!")
 
     def writeOutput(self, tokens_file_path="tokens.txt", errors_file_path="errors.txt"):
         self._writeOutput("output/" + tokens_file_path, self.tokens)
         self._writeOutput("output/" + errors_file_path, self.errors)
+
+    def reset_current_token(self):
+        self.current_token_index = 0
+
+    def get_next_token(self):
+        if not hasattr(self, "tokens"):
+            return
+
+        if not hasattr(self, "current_token_index"):
+            self.current_token_index = 0
+
+        if self.current_token_index == len(self.tokens):
+            self.reset_current_token()
+            return "$"
+
+        current_token_index = self.current_token_index
+        self.current_token_index += 1
+
+        return self.tokens[current_token_index]
