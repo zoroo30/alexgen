@@ -1,21 +1,32 @@
-from lexical_analyzer.get_lexer import get_lexer
+from lexical_analyzer_generator.get_lexer import get_lexer
+from parser_generator.get_parser import get_parser
+from parser_generator.testing_tokens import TestingTokens
 import os
 
 os.environ["LEXER_INPUT_FOLDER"] = "inputs/"
 os.environ["LEXER_OUTPUT_FOLDER"] = "outputs/lexer/"
+os.environ["PARSER_INPUT_FOLDER"] = "inputs/"
+os.environ["PARSER_OUTPUT_FOLDER"] = "outputs/parser/"
 
 
 def main():
-    # lexer, final_nfa, dfa = get_lexer()
-    # final_nfa.visualize("nfa.html")
-    # dfa.visualize("dfa.html", False)
+    # # get lexer from phase 1
+    # lexer = get_lexer("lexical.txt")
 
-    lexer, _, _ = get_lexer()
+    # # analyze program file and generate lexer output
+    # lexer.analyze_file("program.txt")
+    # lexer.analyze()
+    # lexer.writeOutput()
 
-    next_token = lexer.get_next_token()
-    while next_token != "$":
-        print(next_token)
-        next_token = lexer.get_next_token()
+    # # parser needs get_next_token function
+    # parser = get_parser("grammar.txt")
+    # parser.set_input_src(lexer.get_next_token)
+    # parser.parse()
+    # parser.write_output()
+
+    parser = get_parser("grammar.txt")
+    parser.set_input_src(TestingTokens.get_next_testing_token)
+    parser.parse()
 
 
 if __name__ == "__main__":
