@@ -1,7 +1,7 @@
-from nfa import NFA
-from fa import FA
-from utilities.partition_refinement import PartitionRefinement
-from utilities.sets import getElement
+from lexical_analyzer.nfa import NFA
+from lexical_analyzer.fa import FA
+from lexical_analyzer.utilities.partition_refinement import PartitionRefinement
+from lexical_analyzer.utilities.sets import getElement
 
 
 class DFA(FA):

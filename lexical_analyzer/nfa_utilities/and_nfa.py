@@ -1,4 +1,4 @@
-from nfa_utilities.merge import merge
+from lexical_analyzer.nfa_utilities.merge import merge
 
 
 def and_translate(nfa1, nfa2):

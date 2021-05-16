@@ -3,7 +3,7 @@ import os
 
 class Lexer:
     def __init__(self, input_file_path, dfa):
-        self.input_file_path = input_file_path
+        self.input_file_path = os.environ["LEXER_INPUT_FOLDER"] + input_file_path
         self.dfa = dfa
         self.lines = self._preprocess()
 
@@ -86,8 +86,12 @@ class Lexer:
             print("An error occured opening the file!")
 
     def writeOutput(self, tokens_file_path="tokens.txt", errors_file_path="errors.txt"):
-        self._writeOutput("output/" + tokens_file_path, self.tokens)
-        self._writeOutput("output/" + errors_file_path, self.errors)
+        self._writeOutput(
+            os.environ.get("LEXER_OUTPUT_FOLDER") + tokens_file_path, self.tokens
+        )
+        self._writeOutput(
+            os.environ.get("LEXER_OUTPUT_FOLDER") + errors_file_path, self.errors
+        )
 
     def reset_current_token(self):
         self.current_token_index = 0

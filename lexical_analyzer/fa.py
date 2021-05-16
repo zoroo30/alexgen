@@ -7,11 +7,12 @@ class FA:
     def __init__(self):
         self.alphabet = {}
         self.initial_state = None
+        self.labels = {}
         self.final_states = {}
         self.transition_table = {}
         self.dead_states = set()
 
-    def visualize(self, output_file, labels, physics=True, show_dead_states=False):
+    def visualize(self, output_file, physics=True, show_dead_states=False):
         g = Network(height="100%", width="100%", directed=True)
 
         g.set_edge_smooth("continuous")
@@ -26,7 +27,7 @@ class FA:
                 color = "#b0ee64"
                 border_width = 5
                 border_width_selected = 7
-                title = labels[self.final_states[state]]
+                title = self.labels[self.final_states[state]]
 
             if state == self.initial_state:
                 color = "#6492ee"
@@ -76,7 +77,9 @@ class FA:
                         arrowStrikethrough=False,
                     )
 
-        output_file = "output/visualization/" + output_file
+        output_file = (
+            os.environ.get("LEXER_OUTPUT_FOLDER") + "visualization/" + output_file
+        )
         os.makedirs(os.path.dirname(output_file), exist_ok=True)
         g.write_html(output_file)
         webbrowser.open("file://" + os.path.realpath(output_file))

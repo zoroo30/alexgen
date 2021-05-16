@@ -1,4 +1,4 @@
-from nfa_utilities.merge import merge
+from lexical_analyzer.nfa_utilities.merge import merge
 import copy
 
 

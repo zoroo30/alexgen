@@ -1,5 +1,10 @@
-from fa import FA
-from nfa_utilities import range_gen_nfa, closure_nfa, and_nfa, nfa_or_op
+from lexical_analyzer.fa import FA
+from lexical_analyzer.nfa_utilities import (
+    range_gen_nfa,
+    closure_nfa,
+    and_nfa,
+    nfa_or_op,
+)
 
 
 class NFA(FA):
