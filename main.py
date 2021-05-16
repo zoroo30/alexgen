@@ -24,9 +24,9 @@ def main():
     # parser.parse()
     # parser.write_output()
 
-    parser = get_parser("grammar.txt")
+    parser = get_parser("test_grmr.txt")
     parser.set_input_src(TestingTokens.get_next_testing_token)
-    parser.parse()
+    # parser.parse()
 
 
 if __name__ == "__main__":
