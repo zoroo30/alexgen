@@ -59,12 +59,10 @@ class ParserGenerator:
         # self.follow[start_symbol].add('$')
 
         waiting = {}
-        once = 3
-        #once = 1
+        once = 1
         while len(waiting) + once > 0:
             # print(waiting)
-            once -= 1
-            #once = 0
+            once = 0
             for symbol in grammar:
                 productions = grammar[symbol]
                 for production in productions:
