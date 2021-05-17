@@ -8,6 +8,8 @@ class GrammarInputHandler:
         self.grammar, self.terminals, self.non_terminals = self.generate_rules(
             input_file_path
         )
+        self.left_recursion_elimination()
+        self.update_nonTerminals()
         return
 
     def __str__(self):
@@ -53,9 +55,63 @@ class GrammarInputHandler:
 
                 for non_terminal in non_terminals:
                     if not non_terminal in grammar:
-                        raise Exception("non terminal do not exist", non_terminal)
+                        raise Exception(
+                            "non terminal do not exist", non_terminal)
 
                 return grammar, terminals, non_terminals
 
         except Exception as e:
             print(e)
+
+    def update_nonTerminals(self):
+        for thing in self.grammar:
+            if thing not in self.non_terminals:
+                self.non_terminals.add(thing)
+                self.terminals.add('\\L')
+
+    def eliminate_immediate(self, derivations):
+        new_derivations = {}
+        for non_trmnl in derivations:
+            A = []
+            B = []
+            for production in derivations[non_trmnl]:
+                if production[0] == non_trmnl:
+                    A.append(production[1:])
+                else:
+                    B.append(production)
+            if len(A) > 0:
+                new_derivations[non_trmnl] = [b + [non_trmnl+'_'] for b in B]
+                new_derivations[non_trmnl+'_'] = [a +
+                                                  [non_trmnl+'_'] for a in A]
+                new_derivations[non_trmnl+'_'].append(["'\\L'"])
+            else:
+                new_derivations = derivations
+        # print(new_derivations)
+        return new_derivations
+
+    def left_recursion_elimination(self):
+        for i, derivation in enumerate(self.grammar):
+            new_derivations = {}
+            for j in range(i):
+                Aj = list(self.grammar)[j]
+                for production in self.grammar[derivation]:
+                    if production[0] == Aj:
+                        # replace
+                        Y = production[1:]
+                        self.grammar[derivation].remove(production)
+                        for aj_prod in self.grammar[Aj]:
+                            copy = aj_prod.copy()
+                            copy.append(Y)
+                            self.grammar[derivation].append(copy)
+
+            self.eliminate_immediate(new_derivations)
+            if len(new_derivations) > 0:
+                del self.grammar[derivation]
+                self.grammar.update(new_derivations)
+        new = {}
+        for derivation in self.grammar:
+            dictrow = {}
+            dictrow[derivation] = self.grammar[derivation]
+            derivations = self.eliminate_immediate(dictrow)
+            new.update(derivations)
+        self.grammar.update(new)
