@@ -1,13 +1,6 @@
-int n;
-int reversed;
-reversed = 0;
-int remainder;
-int originalN;
-originalN = n;
-
-while (n <> 0) 
+int x;
+x = 5;
+if(x>2)
 {
-	reversedN = reversedN * 10;
-	reversedN = reversedN + remainder;
-	n = n / 10;
+	x=0;
 }

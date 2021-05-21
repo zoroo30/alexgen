@@ -1,4 +1,5 @@
 from os import error
+import pandas as pd
 
 
 class Parser:
@@ -21,8 +22,8 @@ class Parser:
         stack.append(self.start_symbol)
         next_token = self.get_next_token()
         while len(stack) != 0 and next_token != None:
-            print(next_token)
-            print(stack[-1], str(stack))
+            # print(next_token)
+            # print(stack[-1], str(stack))
             if stack[-1] in self.parsing_table:  # top of stack is non terminal
                 # terminal has entry with non terminal
                 if next_token in self.parsing_table[stack[-1]]:
@@ -51,7 +52,7 @@ class Parser:
 
                 elif stack[-1] == "'" + next_token + "'":
                     stack.pop()
-                    output.append('Matched ' + next_token)
+                    output.append(('', 'Matched ' + next_token, ''))
                     next_token = self.get_next_token()
 
                 else:
@@ -64,8 +65,8 @@ class Parser:
                     # print("Table row: " + str(self.parsing_table[stack[-1]]))
             # next_token = self.get_next_token()
 
-        for out in output:
-            print(out)
+        df = pd.DataFrame(output, columns=[" ", " ", " "])
+        print(df)
         print(errors)
 
     def write_output(self):

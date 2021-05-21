@@ -45,7 +45,7 @@ class ParserGenerator:
             self.compute_First(non)
 
         df = pd.DataFrame(self.first.items(), columns=[" ", "FirstSet"])
-        print(df)
+        # print(df)
         return self.first
 
     def follow_sets(self):
@@ -107,7 +107,7 @@ class ParserGenerator:
                 self.follow[item] = set()
                 self.follow[item].add('$')
         df = pd.DataFrame(self.follow.items(), columns=[" ", "FollowSet"])
-        print(df)
+        # print(df)
         return self.follow
 
     def generate_parsing_table(self):
@@ -158,7 +158,7 @@ class ParserGenerator:
         df = pd.DataFrame(M.items(), columns=[
             "Nonterminal", "Unorganized Table"])
         pd.set_option("max_colwidth", 125)
-        print(df)
+        # print(df)
         return self.parsing_table
 
     def generate(self):

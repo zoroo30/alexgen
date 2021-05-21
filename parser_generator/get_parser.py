@@ -8,7 +8,7 @@ def get_parser(grammar_file_path):
     # print(grammar.grammar)
     # print("\n".join(f'{v:9,} {k}' for k, v in grammar.grammar.items()))
     df = pd.DataFrame(grammar.grammar.items(), columns=[" ", "Productions"])
-    print(df)
+    # print(df)
     # print(grammar.terminals)
 
     # print(grammar.non_terminals)

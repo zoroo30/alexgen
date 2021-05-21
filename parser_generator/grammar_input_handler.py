@@ -9,7 +9,9 @@ class GrammarInputHandler:
             input_file_path
         )
         self.left_recursion_elimination()
-        self.update_nonTerminals()
+        self.update_nonTerminals(1)
+        self.left_factoring()
+        self.update_nonTerminals(2)
         return
 
     def __str__(self):
@@ -63,11 +65,16 @@ class GrammarInputHandler:
         except Exception as e:
             print(e)
 
-    def update_nonTerminals(self):
+    def update_nonTerminals(self, flag):
         for thing in self.grammar:
             if thing not in self.non_terminals:
                 self.non_terminals.add(thing)
-                self.terminals.add('\\L')
+                if flag == 1:
+                    self.terminals.add('\\L')
+        if flag == 1:
+            print("GRAMMAR IS NOT LL(1)! HAD TO PERFORM LEFT RECURSIN ELEMINATION!")
+        if flag == 2:
+            print("GRAMMAR IS NOT LL(1)! HAD TO PERFORM LEFT FACTORING!")
 
     def eliminate_immediate(self, derivations):
         new_derivations = {}
@@ -114,4 +121,34 @@ class GrammarInputHandler:
             dictrow[derivation] = self.grammar[derivation]
             derivations = self.eliminate_immediate(dictrow)
             new.update(derivations)
+        self.grammar.update(new)
+
+    def left_factoring(self):
+        new = {}
+        for derivation in self.grammar:
+            for j, productionA in enumerate(self.grammar[derivation]):
+                new_derivations = {}
+                indices = list()
+                for k, productionB in enumerate(self.grammar[derivation]):
+                    if k <= j:
+                        continue
+                    if productionA[0] == productionB[0]:
+                        indices.append(k)
+                if len(indices) > 0:
+                    new_derivations[derivation] = list()
+                    new_derivations[derivation].append(
+                        [productionA[0], derivation+"_"])
+                    new_derivations[derivation+"_"] = list()
+                    for l, production_curr in enumerate(self.grammar[derivation]):
+                        if l in indices or l == j:
+                            if len(production_curr) > 1:
+                                new_derivations[derivation +
+                                                "_"].append(production_curr[1:])
+                            else:
+                                new_derivations[derivation +
+                                                "_"].append(["'\L'"])
+
+                        else:
+                            new_derivations[derivation].append(production_curr)
+                    new.update(new_derivations)
         self.grammar.update(new)
