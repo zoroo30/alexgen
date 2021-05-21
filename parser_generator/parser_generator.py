@@ -8,10 +8,10 @@ class ParserGenerator:
         self.first = {}
         self.follow = {}
         self.parsing_table = None
+        self.start_symbol = next(iter(self.grammarHndlr.grammar))
 
     def get_me_start_symbol(self):
-        grammar = self.grammarHndlr.grammar
-        return next(iter(grammar))
+        return self.start_symbol
 
     def compute_First(self, non):
         grammar = self.grammarHndlr.grammar
@@ -116,9 +116,9 @@ class ParserGenerator:
         non_terminals = self.grammarHndlr.non_terminals
 
         first_sets = self.first_sets()
-        #print("computed first sets")
+        # print("computed first sets")
         follow_sets = self.follow_sets()
-        #print("computed follow sets")
+        # print("computed follow sets")
 
         M = {}
         for non in non_terminals:
@@ -130,25 +130,39 @@ class ParserGenerator:
                 first_alpha = self.first[production[0]]
                 for a in first_alpha:
                     if a in terminals and a != '\\L':
+                        if symbol in M and a in M[symbol]:
+                            print("Not LL1 Grammar")
+                            exit()
                         M[symbol][a] = production
                     if a == '\\L':
                         follow_A = self.follow[symbol]
                         if '$' in follow_A:
+                            if symbol in M and '$' in M[symbol]:
+                                print("Not LL1 Grammar")
+                                exit()
                             M[symbol]['$'] = production
                         for fol_a in follow_A:
                             if fol_a in terminals:
+                                if symbol in M and fol_a in M[symbol]:
+                                    print("Not LL1 Grammar")
+                                    exit()
                                 M[symbol][fol_a] = production
+            follows = self.follow[symbol]
+            for follow in follows:
+                if follow not in M[symbol]:
+                    M[symbol][follow] = 'sync'
+
         self.parsing_table = M
         # for key, value in M.items():
         #     print(key, ' : ', value)
         df = pd.DataFrame(M.items(), columns=[
-                          "Nonterminal", "Unorganized Table"])
+            "Nonterminal", "Unorganized Table"])
         pd.set_option("max_colwidth", 125)
         print(df)
         return self.parsing_table
 
     def generate(self):
         self.generate_parsing_table()
-        #print("created parsing table")
-        self.parser = Parser(self.parsing_table)
+        # print("created parsing table")
+        self.parser = Parser(self.parsing_table, self.start_symbol)
         return self.parser

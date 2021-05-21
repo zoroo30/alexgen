@@ -1,6 +1,5 @@
 class TestingTokens:
     testing_tokens = [
-        "program",
         "id",
         ";",
         "var",
@@ -56,17 +55,21 @@ class TestingTokens:
         "id",
         ")",
         "end",
-        ".",
+        "."
     ]
 
     current_testing_token_index = 0
 
     @staticmethod
     def get_next_testing_token():
+        if TestingTokens.current_testing_token_index > len(
+            TestingTokens.testing_tokens
+        ):
+            return None
         if TestingTokens.current_testing_token_index == len(
             TestingTokens.testing_tokens
         ):
-            TestingTokens.current_testing_token_index = 0
+            TestingTokens.current_testing_token_index += 1
             return "$"
 
         curr = TestingTokens.current_testing_token_index

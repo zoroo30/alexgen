@@ -8,7 +8,8 @@ class Lexer:
             self.analyze_file(input_file_path)
 
     def analyze_file(self, input_file_path):
-        self.input_file_path = os.environ["LEXER_INPUT_FOLDER"] + input_file_path
+        self.input_file_path = os.environ["LEXER_INPUT_FOLDER"] + \
+            input_file_path
         self.lines = self._preprocess()
 
     def _preprocess(self):
@@ -46,11 +47,13 @@ class Lexer:
                 result = self.dfa.apply(word[i])
                 acceptance_state = result
                 if result == None and i == len(word) - 1:
-                    error = self._generateError(line_number, word_num, i, word, word[i])
+                    error = self._generateError(
+                        line_number, word_num, i, word, word[i])
                     errors.append(error)
             except:
                 if acceptance_state == None:
-                    error = self._generateError(line_number, word_num, i, word, word[i])
+                    error = self._generateError(
+                        line_number, word_num, i, word, word[i])
                     errors.append(error)
                 else:
                     tokens.append(acceptance_state)
@@ -91,10 +94,12 @@ class Lexer:
 
     def writeOutput(self, tokens_file_path="tokens.txt", errors_file_path="errors.txt"):
         self._writeOutput(
-            os.environ.get("LEXER_OUTPUT_FOLDER") + tokens_file_path, self.tokens
+            os.environ.get("LEXER_OUTPUT_FOLDER") +
+            tokens_file_path, self.tokens
         )
         self._writeOutput(
-            os.environ.get("LEXER_OUTPUT_FOLDER") + errors_file_path, self.errors
+            os.environ.get("LEXER_OUTPUT_FOLDER") +
+            errors_file_path, self.errors
         )
 
     def reset_current_token(self):
