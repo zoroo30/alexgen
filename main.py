@@ -14,12 +14,12 @@ def main():
     lexer = get_lexer("lexical.txt")
 
     # analyze program file and generate lexer output
-    lexer.analyze_file("program.txt")
+    lexer.analyze_file("case1.txt")
     lexer.analyze()
     lexer.writeOutput()
 
     # parser needs get_next_token function
-    parser = get_parser("grammar.txt")
+    parser = get_parser("input_CFG_LL.txt")
     parser.set_input_src(lexer.get_next_token)
     parser.parse()
     # parser.write_output()

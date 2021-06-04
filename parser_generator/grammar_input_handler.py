@@ -8,10 +8,10 @@ class GrammarInputHandler:
         self.grammar, self.terminals, self.non_terminals = self.generate_rules(
             input_file_path
         )
-        self.left_recursion_elimination()
-        self.update_nonTerminals(1)
-        self.left_factoring()
-        self.update_nonTerminals(2)
+        # self.left_recursion_elimination()
+        # self.update_nonTerminals(1)
+        # self.left_factoring()
+        # self.update_nonTerminals(2)
         return
 
     def __str__(self):
@@ -70,7 +70,7 @@ class GrammarInputHandler:
             if thing not in self.non_terminals:
                 self.non_terminals.add(thing)
                 if flag == 1:
-                    self.terminals.add('\\L')
+                    self.terminals.add('\L')
         if flag == 1:
             print("GRAMMAR IS NOT LL(1)! HAD TO PERFORM LEFT RECURSIN ELEMINATION!")
         if flag == 2:
@@ -90,7 +90,7 @@ class GrammarInputHandler:
                 new_derivations[non_trmnl] = [b + [non_trmnl+'_'] for b in B]
                 new_derivations[non_trmnl+'_'] = [a +
                                                   [non_trmnl+'_'] for a in A]
-                new_derivations[non_trmnl+'_'].append(["'\\L'"])
+                new_derivations[non_trmnl+'_'].append(["\L"])
             else:
                 new_derivations = derivations
         # print(new_derivations)
@@ -146,7 +146,7 @@ class GrammarInputHandler:
                                                 "_"].append(production_curr[1:])
                             else:
                                 new_derivations[derivation +
-                                                "_"].append(["'\L'"])
+                                                "_"].append(["\L"])
 
                         else:
                             new_derivations[derivation].append(production_curr)

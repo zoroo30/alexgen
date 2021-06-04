@@ -47,7 +47,7 @@ class Parser:
                     # print(output)
                     # return -1  # check later
             else:  # top of stack is a terminal
-                if stack[-1] == "'\L'":
+                if stack[-1] == "\L":
                     stack.pop()
 
                 elif stack[-1] == "'" + next_token + "'":
@@ -67,6 +67,8 @@ class Parser:
 
         df = pd.DataFrame(output, columns=[" ", " ", " "])
         print(df)
+        # for out in output:
+        #     print(out)
         print(errors)
 
     def write_output(self):

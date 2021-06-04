@@ -18,17 +18,17 @@ class ParserGenerator:
         self.first[non] = set()
         productions = grammar[non]
         for production in productions:
-            if len(production) == 1 and production[0] == '\\L':
-                self.first[non].add('\\L')
+            if len(production) == 1 and production[0] == '\L':
+                self.first[non].add('\L')
                 continue
             for item in production:
                 if item not in self.first:
                     self.compute_First(item)
 
                 set_to_add = self.first[item].copy()
-                if '\\L' in set_to_add:
+                if '\L' in set_to_add:
                     if item != production[-1]:
-                        set_to_add.discard('\\L')
+                        set_to_add.discard('\L')
                     self.first[non].update(set_to_add)
                 else:
                     self.first[non].update(set_to_add)
@@ -40,12 +40,16 @@ class ParserGenerator:
         terminals = self.grammarHndlr.terminals
 
         for terminal in terminals:
-            self.first['\''+terminal+'\''] = {terminal}
+            if terminal != '\L':
+                self.first['\''+terminal+'\''] = {terminal}
+            else:
+                self.first[terminal] = {terminal}
         for non in grammar:
             self.compute_First(non)
 
         df = pd.DataFrame(self.first.items(), columns=[" ", "FirstSet"])
         # print(df)
+        # print(self.first["\L"])
         return self.first
 
     def follow_sets(self):
@@ -82,7 +86,7 @@ class ParserGenerator:
                             self.follow[item].update(self.follow[symbol])
                             continue
                         set_to_add = self.first[production[index + 1]].copy()
-                        if '\\L' in set_to_add:
+                        if '\L' in set_to_add:
                             if symbol not in self.follow:
                                 waiting[item] = symbol
                                 continue
@@ -94,7 +98,7 @@ class ParserGenerator:
                             if item in waiting:
                                 del waiting[item]
                             self.follow[item].update(self.follow[symbol])
-                            set_to_add.discard('\\L')
+                            set_to_add.discard('\L')
                         if item not in self.follow:
                             self.follow[item] = set()
                         if item == self.get_me_start_symbol():
@@ -121,31 +125,36 @@ class ParserGenerator:
         # print("computed follow sets")
 
         M = {}
-        for non in non_terminals:
+        for non in grammar:
+            # print(non)
             M[non] = {}
 
         for symbol in grammar:
             productions = grammar[symbol]
             for production in productions:
+                # print(production[0])
                 first_alpha = self.first[production[0]]
                 for a in first_alpha:
-                    if a in terminals and a != '\\L':
+                    if a in terminals and a != '\L':
                         if symbol in M and a in M[symbol]:
-                            print("Not LL1 Grammar")
+                            print("Not LL1 Grammar - Code 0")
                             exit()
                         M[symbol][a] = production
-                    if a == '\\L':
+                    if a == '\L':
                         follow_A = self.follow[symbol]
                         if '$' in follow_A:
                             if symbol in M and '$' in M[symbol]:
-                                print("Not LL1 Grammar")
+                                print("Not LL1 Grammar - Code 1")
                                 exit()
                             M[symbol]['$'] = production
                         for fol_a in follow_A:
                             if fol_a in terminals:
-                                if symbol in M and fol_a in M[symbol]:
-                                    print("Not LL1 Grammar")
-                                    exit()
+                                # if symbol in M and fol_a in M[symbol]:
+                                # print(symbol)
+                                # print(M[symbol])
+                                # print(fol_a)
+                                # print("Not LL1 Grammar - Code 2")
+                                # exit()
                                 M[symbol][fol_a] = production
             follows = self.follow[symbol]
             for follow in follows:
