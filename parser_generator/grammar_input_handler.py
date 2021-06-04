@@ -8,10 +8,10 @@ class GrammarInputHandler:
         self.grammar, self.terminals, self.non_terminals = self.generate_rules(
             input_file_path
         )
-        # self.left_recursion_elimination()
-        # self.update_nonTerminals(1)
-        # self.left_factoring()
-        # self.update_nonTerminals(2)
+        self.left_recursion_elimination()
+        self.update_nonTerminals(1)
+        self.left_factoring()
+        self.update_nonTerminals(2)
         return
 
     def __str__(self):
@@ -71,10 +71,10 @@ class GrammarInputHandler:
                 self.non_terminals.add(thing)
                 if flag == 1:
                     self.terminals.add('\L')
-        if flag == 1:
-            print("GRAMMAR IS NOT LL(1)! HAD TO PERFORM LEFT RECURSIN ELEMINATION!")
-        if flag == 2:
-            print("GRAMMAR IS NOT LL(1)! HAD TO PERFORM LEFT FACTORING!")
+        # if flag == 1:
+        #     print("GRAMMAR IS NOT LL(1)! HAD TO PERFORM LEFT RECURSIN ELEMINATION!")
+        # if flag == 2:
+        #     print("GRAMMAR IS NOT LL(1)! HAD TO PERFORM LEFT FACTORING!")
 
     def eliminate_immediate(self, derivations):
         new_derivations = {}
@@ -121,6 +121,8 @@ class GrammarInputHandler:
             dictrow[derivation] = self.grammar[derivation]
             derivations = self.eliminate_immediate(dictrow)
             new.update(derivations)
+        if len(new) > len(self.grammar):
+            print("GRAMMAR IS NOT LL(1)! HAD TO PERFORM LEFT RECURSION ELEMINATION!")
         self.grammar.update(new)
 
     def left_factoring(self):
@@ -151,4 +153,6 @@ class GrammarInputHandler:
                         else:
                             new_derivations[derivation].append(production_curr)
                     new.update(new_derivations)
+        if len(new) > 0:
+            print("GRAMMAR IS NOT LL(1)! HAD TO PERFORM LEFT FACTORING!")
         self.grammar.update(new)
