@@ -1,4 +1,4 @@
-from os import error
+import os
 import pandas as pd
 
 
@@ -29,17 +29,18 @@ class Parser:
                 if next_token in self.parsing_table[stack[-1]]:
                     table_element = self.parsing_table[stack[-1]][next_token]
                     temp = stack.pop()
-                    if table_element == 'sync':
-                        errors.append('sync')
+                    if table_element == "sync":
+                        errors.append("sync")
                         continue
                     else:
                         symbol_list = table_element
                         for symbol in symbol_list[::-1]:  # reverse
                             stack.append(symbol)
-                        output.append((temp, '--->', symbol_list))
+                        output.append((temp, "--->", symbol_list))
                 else:
                     errors.append(
-                        f"Error : terminal {next_token} has no entry with nonterminal {stack[-1]} in table")
+                        f"Error : terminal {next_token} has no entry with nonterminal {stack[-1]} in table"
+                    )
                     next_token = self.get_next_token()
                     # print("Terminal: " + next_token)
                     # print("Top of stack: " + stack[-1])
@@ -52,12 +53,11 @@ class Parser:
 
                 elif stack[-1] == "'" + next_token + "'":
                     stack.pop()
-                    output.append(('', 'Matched ' + next_token, ''))
+                    output.append(("", "Matched " + next_token, ""))
                     next_token = self.get_next_token()
 
                 else:
-                    errors.append(
-                        f"Error 2 : missing terminal {stack[-1]} in stack")
+                    errors.append(f"Error 2 : missing terminal {stack[-1]} in stack")
                     stack.pop()
                     # print("Terminal: " + next_token)
                     # print("stack: " + str(stack))
@@ -65,12 +65,28 @@ class Parser:
                     # print("Table row: " + str(self.parsing_table[stack[-1]]))
             # next_token = self.get_next_token()
 
-        df = pd.DataFrame(output, columns=[" ", " ", " "])
-        print(df)
-        # for out in output:
-        #     print(out)
-        print(errors)
+        self.df = pd.DataFrame(output, columns=[" ", " ", " "])
+        self.errors = errors
 
-    def write_output(self):
-        # print("writing output")
-        return
+    def _writeOutput(self, file_path, output):
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+
+        try:
+            with open(file_path, "w") as f:
+                if isinstance(output, str):
+                    f.write(output)
+                else:
+                    for line in output:
+                        f.write(line + "\n")
+        except:
+            print("An error occured opening the file!")
+
+    def writeOutput(self, parser_file_path="parser.txt", errors_file_path="errors.txt"):
+        self._writeOutput(
+            os.environ.get("PARSER_OUTPUT_FOLDER") + parser_file_path,
+            self.df.to_string(header=False, index=False),
+        )
+        self._writeOutput(
+            os.environ.get("PARSER_OUTPUT_FOLDER") + errors_file_path,
+            self.errors,
+        )
