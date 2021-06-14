@@ -201,7 +201,6 @@ def generate_rules(fname):
         print("An Error occured opening the file")
 
     for line in file_text:
-
         # Check Regular Expression
         if re.search(r"\w+\s*[:]\s*", line):
             line_tmp = line.replace(" ", "").strip().split(":", 1)

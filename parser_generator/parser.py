@@ -31,6 +31,7 @@ class Parser:
                     temp = stack.pop()
                     if table_element == "sync":
                         errors.append("sync")
+                        output.append(("", "sync", ""))
                         continue
                     else:
                         symbol_list = table_element
@@ -40,6 +41,13 @@ class Parser:
                 else:
                     errors.append(
                         f"Error : terminal {next_token} has no entry with nonterminal {stack[-1]} in table"
+                    )
+                    output.append(
+                        (
+                            "",
+                            f"Error : terminal {next_token} has no entry with nonterminal {stack[-1]} in table",
+                            "",
+                        )
                     )
                     next_token = self.get_next_token()
                     # print("Terminal: " + next_token)
@@ -58,6 +66,9 @@ class Parser:
 
                 else:
                     errors.append(f"Error 2 : missing terminal {stack[-1]} in stack")
+                    output.append(
+                        ("", f"Error 2 : missing terminal {stack[-1]} in stack", "")
+                    )
                     stack.pop()
                     # print("Terminal: " + next_token)
                     # print("stack: " + str(stack))

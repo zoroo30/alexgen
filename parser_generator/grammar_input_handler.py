@@ -59,3 +59,4 @@ class GrammarInputHandler:
 
         except Exception as e:
             print(e)
+            exit()

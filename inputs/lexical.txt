@@ -1,7 +1,7 @@
 letter = a-z | A-Z
 digit = 0 - 9
 digits = digit+
-{program var int}
+{program var int float}
 num: digit+ | digit+ . digits ( \L | E digits)
 relop:<> | > | >\= | < | <\=
 assign: \:\=
